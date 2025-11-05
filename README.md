@@ -58,12 +58,16 @@ Then visit `http://localhost:3000` and start playing!
 
 ## Deployment
 
-**Ready to deploy? See [DEPLOY.md](DEPLOY.md) for deploying to Render.**
+**Ready to deploy?**
+
+📖 **[COMPLETE_RENDER_GUIDE.md](COMPLETE_RENDER_GUIDE.md)** - Ultra-detailed 20+ page guide (RECOMMENDED for first-timers)
+📄 **[DEPLOY.md](DEPLOY.md)** - Quick reference guide for experienced users
 
 The game is fully configured for easy deployment to Render's free tier:
 - One-click deployment with `render.yaml`
 - Automatic builds and deploys
 - Free hosting for the prototype
+- Complete step-by-step guides included
 
 ## Game Quests
 
