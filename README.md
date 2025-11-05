@@ -49,6 +49,14 @@ npm start
 
 Then visit `http://localhost:3000` and start playing!
 
+## Deployment
+
+**Ready to deploy? See [DEPLOY.md](DEPLOY.md) for deploying to Render.**
+
+The game is fully configured for easy deployment to Render's free tier:
+- One-click deployment with `render.yaml`
+- Automatic builds and deploys
+- Free hosting for the prototype
 
 ## Game Quests
 

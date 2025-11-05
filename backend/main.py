@@ -2,13 +2,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict
+import os
 
 app = FastAPI(title="Gensyn Valley API")
 
 # CORS middleware to allow frontend to connect
+# Get allowed origins from environment variable or use defaults
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    frontend_url,
+]
+
+# Remove duplicates and empty strings
+allowed_origins = list(set(filter(None, allowed_origins)))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -137,4 +149,5 @@ async def get_player():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

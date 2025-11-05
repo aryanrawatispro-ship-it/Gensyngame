@@ -1,0 +1,33 @@
+services:
+  # Backend API Service
+  - type: web
+    name: gensyn-valley-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        sync: false
+    healthCheckPath: /
+
+  # Frontend Service
+  - type: web
+    name: gensyn-valley-frontend
+    env: static
+    region: oregon
+    plan: free
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
