@@ -2,6 +2,10 @@
 
 A cozy adventure game inspired by Stardew Valley where players learn about Gensyn's decentralized AI infrastructure through educational quests and NPC interactions.
 
+## Current Status: Playable Prototype
+
+The first playable prototype is now available! You can explore the valley, meet NPCs, and learn about Gensyn through interactive dialog.
+
 ## Features
 
 - **Gensyn Learning Quests** — Educational gameplay teaching Verde, Skip-Pipe, RL Swarms, and more
@@ -10,15 +14,49 @@ A cozy adventure game inspired by Stardew Valley where players learn about Gensy
 - **Real Gensyn Integration** — Links to actual Gensyn documentation and learning resources
 - **Community Leaderboard** — Track progress and compete with other players
 
+## Prototype Features
+
+- Move your character around a grass field using WASD or arrow keys
+- Meet and talk to NPCs (Verde the Validator, Skip-Pipe Courier)
+- Learn about Gensyn concepts through interactive dialog
+- Track your quest progress in the quest log
+- Simple and intuitive UI
+
 ## Tech Stack
 
-- **Frontend:** React / Godot (2D isometric)
+- **Frontend:** React with HTML5 Canvas
 - **Backend:** FastAPI (Python)
-- **Database:** SQLite/PostgreSQL
-- **Deployment:** Vercel + Render
+- **State Management:** React Hooks
+- **Future:** Database integration, more complex game mechanics
 
 ## Getting Started
 
+**See [SETUP.md](SETUP.md) for detailed installation and setup instructions.**
+
+Quick start:
+
+```bash
+# Terminal 1 - Backend
+cd backend
+pip install -r requirements.txt
+python main.py
+
+# Terminal 2 - Frontend
+cd frontend
+npm install
+npm start
+```
+
+Then visit `http://localhost:3000` and start playing!
+
+## Deployment
+
+**Ready to deploy? See [DEPLOY.md](DEPLOY.md) for deploying to Render.**
+
+The game is fully configured for easy deployment to Render's free tier:
+- One-click deployment with `render.yaml`
+- Automatic builds and deploys
+- Free hosting for the prototype
 
 ## Game Quests
 
