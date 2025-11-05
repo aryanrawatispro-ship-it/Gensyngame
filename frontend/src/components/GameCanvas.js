@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import './GameCanvas.css';
 
 const CANVAS_WIDTH = 800;
@@ -16,6 +16,7 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
   const [animationFrame, setAnimationFrame] = useState(0);
   const animationRef = useRef();
   const frameCounter = useRef(0);
+  const lastInteractionTime = useRef(0);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -35,8 +36,8 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
     };
   }, []);
 
-  // Draw pixel art terrain
-  const drawTerrain = (ctx) => {
+  // Draw pixel art terrain - memoized with useCallback
+  const drawTerrain = useCallback((ctx) => {
     // Disable image smoothing for pixel-perfect rendering
     ctx.imageSmoothingEnabled = false;
 
@@ -102,10 +103,10 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
         }
       }
     }
-  };
+  }, []);
 
-  // Draw environmental decorations
-  const drawEnvironment = (ctx) => {
+  // Draw environmental decorations - memoized with useCallback
+  const drawEnvironment = useCallback((ctx) => {
     // Trees
     const trees = [
       { x: 100, y: 100 },
@@ -181,10 +182,10 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
       ctx.fillStyle = '#546e7a';
       ctx.fillRect(rock.x + 8, rock.y + 6, 3, 4);
     });
-  };
+  }, []);
 
-  // Draw pixel art player
-  const drawPlayer = (ctx, x, y, direction, frame) => {
+  // Draw pixel art player - memoized with useCallback
+  const drawPlayer = useCallback((ctx, x, y, direction, frame) => {
     const px = Math.floor(x) - 8;
     const py = Math.floor(y) - 12;
 
@@ -300,10 +301,10 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
     // Add pixel art outline effect
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.lineWidth = 1;
-  };
+  }, []);
 
-  // Draw pixel art NPCs
-  const drawNPC = (ctx, npc) => {
+  // Draw pixel art NPCs - memoized with useCallback
+  const drawNPC = useCallback((ctx, npc, playerX, playerY) => {
     const px = Math.floor(npc.x) - 8;
     const py = Math.floor(npc.y) - 12;
 
@@ -374,7 +375,7 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
 
     // Interaction prompt
     const distance = Math.sqrt(
-      Math.pow(gameState.player.x - npc.x, 2) + Math.pow(gameState.player.y - npc.y, 2)
+      Math.pow(playerX - npc.x, 2) + Math.pow(playerY - npc.y, 2)
     );
     if (distance < INTERACTION_DISTANCE) {
       // Pixel art exclamation mark
@@ -389,7 +390,7 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
       ctx.strokeText('[E]', npc.x, py + 32);
       ctx.fillText('[E]', npc.x, py + 32);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -399,29 +400,31 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
     ctx.imageSmoothingEnabled = false;
 
     let player = { ...gameState.player };
+    let currentDirection = playerDirection;
+    let currentFrame = animationFrame;
     let isMoving = false;
 
     const gameLoop = () => {
       // Handle movement
       let moved = false;
-      let newDirection = playerDirection;
+      let newDirection = currentDirection;
 
-      if (keys['ArrowUp'] || keys['w']) {
+      if (keys['ArrowUp'] || keys['w'] || keys['W']) {
         player.y = Math.max(SPRITE_SIZE, player.y - MOVE_SPEED);
         newDirection = 'up';
         moved = true;
       }
-      if (keys['ArrowDown'] || keys['s']) {
+      if (keys['ArrowDown'] || keys['s'] || keys['S']) {
         player.y = Math.min(CANVAS_HEIGHT - SPRITE_SIZE, player.y + MOVE_SPEED);
         newDirection = 'down';
         moved = true;
       }
-      if (keys['ArrowLeft'] || keys['a']) {
+      if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
         player.x = Math.max(SPRITE_SIZE, player.x - MOVE_SPEED);
         newDirection = 'left';
         moved = true;
       }
-      if (keys['ArrowRight'] || keys['d']) {
+      if (keys['ArrowRight'] || keys['d'] || keys['D']) {
         player.x = Math.min(CANVAS_WIDTH - SPRITE_SIZE, player.x + MOVE_SPEED);
         newDirection = 'right';
         moved = true;
@@ -429,28 +432,38 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
 
       if (moved) {
         updatePlayer({ x: player.x, y: player.y });
-        setPlayerDirection(newDirection);
+
+        if (newDirection !== currentDirection) {
+          currentDirection = newDirection;
+          setPlayerDirection(newDirection);
+        }
+
         isMoving = true;
 
         // Update animation frame
         frameCounter.current++;
         if (frameCounter.current % 8 === 0) {
-          setAnimationFrame(prev => (prev + 1) % 2);
+          currentFrame = (currentFrame + 1) % 2;
+          setAnimationFrame(currentFrame);
         }
       } else {
         isMoving = false;
       }
 
-      // Check for NPC interactions
+      // Check for NPC interactions with debouncing
       if (keys['e'] || keys['E']) {
-        gameState.npcs.forEach(npc => {
-          const distance = Math.sqrt(
-            Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2)
-          );
-          if (distance < INTERACTION_DISTANCE && !gameState.activeDialog) {
-            showDialog(npc.id);
-          }
-        });
+        const now = Date.now();
+        if (now - lastInteractionTime.current > 500) { // 500ms debounce
+          gameState.npcs.forEach(npc => {
+            const distance = Math.sqrt(
+              Math.pow(player.x - npc.x, 2) + Math.pow(player.y - npc.y, 2)
+            );
+            if (distance < INTERACTION_DISTANCE && !gameState.activeDialog) {
+              lastInteractionTime.current = now;
+              showDialog(npc.id);
+            }
+          });
+        }
       }
 
       // Clear and draw
@@ -464,11 +477,11 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
 
       // Collect and sort all entities by Y position for proper layering
       const entities = [
-        { type: 'player', y: player.y, draw: () => drawPlayer(ctx, player.x, player.y, playerDirection, isMoving ? animationFrame : 0) },
+        { type: 'player', y: player.y, draw: () => drawPlayer(ctx, player.x, player.y, currentDirection, isMoving ? currentFrame : 0) },
         ...gameState.npcs.map(npc => ({
           type: 'npc',
           y: npc.y,
-          draw: () => drawNPC(ctx, npc)
+          draw: () => drawNPC(ctx, npc, player.x, player.y)
         }))
       ];
 
@@ -485,7 +498,7 @@ const GameCanvas = ({ gameState, updatePlayer, showDialog, closeDialog, complete
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [keys, gameState, updatePlayer, showDialog, playerDirection, animationFrame]);
+  }, [keys, gameState, updatePlayer, showDialog, drawTerrain, drawEnvironment, drawPlayer, drawNPC, playerDirection, animationFrame]);
 
   const handleDialogNext = () => {
     if (gameState.activeDialog && currentDialogIndex < gameState.activeDialog.length - 1) {
