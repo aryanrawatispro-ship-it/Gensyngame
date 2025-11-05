@@ -1,0 +1,89 @@
+.quest-log {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 280px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #4da6ff;
+  border-radius: 8px;
+  padding: 15px;
+  color: #fff;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.quest-log h3 {
+  margin: 0 0 15px 0;
+  color: #ffeb3b;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #4da6ff;
+  padding-bottom: 8px;
+}
+
+.quest-log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.quest-log li {
+  margin-bottom: 15px;
+  padding: 12px;
+  background: rgba(77, 166, 255, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #4da6ff;
+}
+
+.quest-log li.completed {
+  opacity: 0.6;
+  border-left-color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.quest-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #4da6ff;
+}
+
+.quest-log li.completed .quest-title {
+  color: #00ff00;
+  text-decoration: line-through;
+}
+
+.quest-description {
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  color: #ccc;
+}
+
+.quest-npc {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
+
+.no-quests {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}
+
+.quest-log::-webkit-scrollbar {
+  width: 6px;
+}
+
+.quest-log::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.quest-log::-webkit-scrollbar-thumb {
+  background: #4da6ff;
+  border-radius: 3px;
+}
