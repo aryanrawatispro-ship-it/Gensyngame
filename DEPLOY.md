@@ -1,5 +1,18 @@
 # Deploying Gensyn Valley to Render
 
+**⚡ NEW: Want the MOST DETAILED guide?**
+
+See **[COMPLETE_RENDER_GUIDE.md](COMPLETE_RENDER_GUIDE.md)** for:
+- ✅ Step-by-step with expected results at every step
+- ✅ Visual guidance showing exactly what you'll see
+- ✅ Complete troubleshooting for every possible error
+- ✅ First-time user friendly - assumes zero knowledge
+- ✅ 20+ pages covering literally everything
+
+**This guide below is the quick version for experienced users.**
+
+---
+
 This guide will walk you through deploying Gensyn Valley to Render's free tier.
 
 ## Prerequisites
