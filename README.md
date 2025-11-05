@@ -29,7 +29,14 @@ The first playable prototype is now available! You can explore the valley, meet 
 - **State Management:** React Hooks
 - **Future:** Database integration, more complex game mechanics
 
-## Getting Started
+## Quick Testing (No Setup!)
+
+**Want to test instantly?** See [TESTING_ALTERNATIVES.md](TESTING_ALTERNATIVES.md) for:
+- 🥇 **Replit** - Import from GitHub and play in 3 minutes (EASIEST!)
+- 🥈 **Render** - Deploy live for free
+- 🥉 **Local Scripts** - One command to run everything
+
+## Getting Started Locally
 
 **See [SETUP.md](SETUP.md) for detailed installation and setup instructions.**
 
